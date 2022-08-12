@@ -31,7 +31,7 @@ int main() {
     printf("当前的工作目录是：%s\n", buf);
 
     // 修改工作目录
-    int ret = chdir("/home/nowcoder/Linux/lesson13");
+    int ret = chdir("/data/vscode/WebServer-master/courses/IO_test");
     if(ret == -1) {
         perror("chdir");
         return -1;
