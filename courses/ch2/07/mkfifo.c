@@ -33,7 +33,7 @@ int main() {
         if(ret == -1) {
             perror("mkfifo");
             exit(0);
-        }       
+        }
 
     }
 

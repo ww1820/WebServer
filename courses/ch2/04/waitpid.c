@@ -14,8 +14,13 @@
                 WNOHANG : 非阻塞
             - 返回值：
                 > 0 : 返回子进程的id
-                = 0 : options=WNOHANG, 表示还有子进程或者
+                = 0 : options=WNOHANG, 表示还有子进程活着
                 = -1 ：错误，或者没有子进程了
+
+
+    getpgrp函数可获取当前进程的进程组ID。
+    getpgid函数可获取指定进程的进程组ID。
+    setpgid函数可改变进程默认的进程组，可加入另一个进程组或创建进程组。
 */
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -43,7 +48,7 @@ int main() {
             sleep(1);
 
             int st;
-            // int ret = waitpid(-1, &st, 0);
+            // int ret = waitpid(-1, &st, 0);  // 相当于 wait(&st);
             int ret = waitpid(-1, &st, WNOHANG);
 
             if(ret == -1) {
