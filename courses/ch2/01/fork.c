@@ -61,7 +61,7 @@ int main() {
         printf("child num += 100 : %d\n", num);
     }
 
-    // for循环
+    // for循环, 父子进程交替执行
     for(int i = 0; i < 3; i++) {
         printf("i : %d , pid : %d\n", i , getpid());
         sleep(1);
@@ -71,7 +71,7 @@ int main() {
 }
 
 /*
-    实际上，更准确来说，Linux 的 fork() 使用是通过写时拷贝 (copy- on-write) 实现。
+    实际上，更准确来说，Linux 的 fork() 使用是通过写时拷贝 (copy-on-write) 实现。
     写时拷贝是一种可以推迟甚至避免拷贝数据的技术。
     内核此时并不复制整个进程的地址空间，而是让父子进程共享同一个地址空间。
     只用在需要写入的时候才会复制地址空间，从而使各个进行拥有各自的地址空间。

@@ -16,8 +16,8 @@ int main() {
     printf("hello\n");
     printf("world");
 
-    // exit(0);
+    // exit(0); // 相当于 return 0;
     _exit(0);
-    
+
     return 0;
 }

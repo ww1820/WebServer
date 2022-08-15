@@ -13,7 +13,7 @@ int main() {
         printf("i am parent process, pid : %d, ppid : %d\n", getpid(), getppid());
 
     } else if(pid == 0) {
-        sleep(20);
+        sleep(1);
         // 当前是子进程
         printf("i am child process, pid : %d, ppid : %d\n", getpid(),getppid());
        
