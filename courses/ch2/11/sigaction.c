@@ -25,8 +25,8 @@
         // 被废弃掉了
         void     (*sa_restorer)(void);
     };
-
 */
+
 #include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +41,7 @@ void myalarm(int num) {
 int main() {
 
     struct sigaction act;
-    act.sa_flags = 0;
+    act.sa_flags = 0 | SA_RESTART;
     act.sa_handler = myalarm;
     sigemptyset(&act.sa_mask);  // 清空临时阻塞信号集
    
@@ -66,8 +66,21 @@ int main() {
         exit(0);
     }
 
-    // getchar();
-    while(1);
+    getchar();
+    // while(1);
+    /*
+        来自评论区：
+        
+        视频中用sigaction只能捕捉一次SIGALRM的原因在于getchar被中断；
+        打印getchar的返回值为-1，perror打印其错误信息：Interrupted system call，对应的错误码为EINTR
+        在man文档第7章
+        man 7 signal
+        Interruption of system calls and library functions by signal handlers
+        If  a signal handler is invoked while a system call or library function call is blocked, then either:
+        * the call is automatically restarted after the signal handler returns; or
+        * the call fails with the error EINTR.
+        我们的sigaction中的sa_flags未设置SA_RESTART所以会是第二种行为，系统调用被中断，下面有讲到read从终端读取数据是会被signal handler中断，getchar底层应该调用的是read。
+    */
 
     return 0;
 }

@@ -17,6 +17,5 @@ int main() {
     while(1) {
         printf("%i\n", i++);
     }
-
     return 0;
 }

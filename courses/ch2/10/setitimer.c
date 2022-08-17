@@ -13,16 +13,14 @@
             - new_value: 设置定时器的属性
             
                 struct itimerval {      // 定时器的结构体
-                struct timeval it_interval;  // 每个阶段的时间，间隔时间
-                struct timeval it_value;     // 延迟多长时间执行定时器
+                    struct timeval it_interval;  // 每个阶段的时间，间隔时间
+                    struct timeval it_value;     // 延迟多长时间执行定时器
                 };
 
                 struct timeval {        // 时间的结构体
                     time_t      tv_sec;     //  秒数     
                     suseconds_t tv_usec;    //  微秒    
                 };
-
-            过10秒后，每个2秒定时一次
            
             - old_value ：记录上一次的定时的时间参数，一般不使用，指定NULL
         

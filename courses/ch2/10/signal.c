@@ -35,10 +35,10 @@ void myalarm(int num) {
 int main() {
 
     // 注册信号捕捉
-    // signal(SIGALRM, SIG_IGN);
-    // signal(SIGALRM, SIG_DFL);
+    // signal(SIGALRM, SIG_IGN); // 忽略
+    // signal(SIGALRM, SIG_DFL); // 默认处理
     // void (*sighandler_t)(int); 函数指针，int类型的参数表示捕捉到的信号的值。
-    signal(SIGALRM, myalarm);
+   
 
     struct itimerval new_value;
 
@@ -49,6 +49,8 @@ int main() {
     // 设置延迟的时间,3秒之后开始第一次定时
     new_value.it_value.tv_sec = 3;
     new_value.it_value.tv_usec = 0;
+
+    signal(SIGALRM, myalarm);
 
     int ret = setitimer(ITIMER_REAL, &new_value, NULL); // 非阻塞的
     printf("定时器开始了...\n");

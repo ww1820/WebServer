@@ -33,7 +33,7 @@ int main() {
 
     // 设置2、3号信号阻塞
     sigset_t set;
-    sigemptyset(&set);
+    sigemptyset(&set); // 清空
     // 将2号和3号信号添加到信号集中
     sigaddset(&set, SIGINT);
     sigaddset(&set, SIGQUIT);

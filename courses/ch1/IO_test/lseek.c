@@ -57,7 +57,7 @@ int main() {
     }
 
     // 在offset = 10000011处写入一个数据
-    write(fd, ".", SEEK_CUR);
+    //  write(fd, ".", SEEK_CUR);
 
     // 关闭文件
     close(fd);
