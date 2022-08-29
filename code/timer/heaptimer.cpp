@@ -14,7 +14,7 @@ void HeapTimer::siftup_(size_t i) {
 void HeapTimer::SwapNode_(size_t i, size_t j) {
     assert(i >= 0 && i < heap_.size());
     assert(j >= 0 && j < heap_.size());
-    std::swap(heap_[i], heap_[j]);
+    std::swap(heap_[i], heap_[j]); // 交换节点，并修改ref_
     ref_[heap_[i].id] = i;
     ref_[heap_[j].id] = j;
 } 
@@ -101,7 +101,7 @@ void HeapTimer::tick() {
         if(std::chrono::duration_cast<MS>(node.expires - Clock::now()).count() > 0) { 
             break; 
         }
-        node.cb();
+        node.cb(); // 
         pop();
     }
 }
@@ -120,6 +120,7 @@ int HeapTimer::GetNextTick() {
     tick();
     size_t res = -1;
     if(!heap_.empty()) {
+        // 函数duration_cast()提供了在不同的时间单位之间进行转换的功能。
         res = std::chrono::duration_cast<MS>(heap_.front().expires - Clock::now()).count();
         if(res < 0) { res = 0; }
     }

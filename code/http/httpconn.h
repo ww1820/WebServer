@@ -48,19 +48,19 @@ public:
 
     // 静态变量，类属性
     static bool isET;
-    static const char* srcDir;  // 资源的目录
+    static const char* srcDir;  // 资源的目录，WebServer 构造时初始化
     static std::atomic<int> userCount; // 总共的客户单的连接数
     
 private:
    
     int fd_;
-    struct  sockaddr_in addr_;
+    struct sockaddr_in addr_;
 
     bool isClose_;
     
+
     int iovCnt_;    // 分散内存的数量
     struct iovec iov_[2];   // 分散内存
-    
     Buffer readBuff_;   // 读(请求)缓冲区，保存请求数据的内容
     Buffer writeBuff_;  // 写(响应)缓冲区，保存响应数据的内容
 

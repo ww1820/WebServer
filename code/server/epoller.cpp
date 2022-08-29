@@ -1,6 +1,6 @@
 #include "epoller.h"
 
-// 创建epoll对象 epoll_create(512)
+// 创建epoll对象 epoll_create(512) // size 可忽略的残参数，events_
 Epoller::Epoller(int maxEvent):epollFd_(epoll_create(512)), events_(maxEvent){
     assert(epollFd_ >= 0 && events_.size() > 0);
 }
@@ -51,7 +51,7 @@ time 指定超时时间
 失败返回 -1，并设置errno
 */
 
-// 调用epoll_wait()进行事件检测
+// 调用epoll_wait()进行事件检测，将就绪事件写入events中
 int Epoller::Wait(int timeoutMs) {
     return epoll_wait(epollFd_, &events_[0], static_cast<int>(events_.size()), timeoutMs);
 }

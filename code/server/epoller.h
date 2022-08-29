@@ -8,6 +8,7 @@
 #include <vector>
 #include <errno.h>
 
+// 对 Epoll 对象进行封装
 class Epoller {
 public:
     explicit Epoller(int maxEvent = 1024); // 默认最大事件数

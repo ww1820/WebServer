@@ -30,9 +30,7 @@ public:
                     std::unique_lock<std::mutex> locker(pool->mtx); // 声明独占锁，并上锁
                     while(true) {
                         if(!pool->tasks.empty()) {
-                            // 从任务队列中取第一个任务
-                            auto task = std::move(pool->tasks.front());
-                            // 移除掉队列中第一个元素
+                            auto task = std::move(pool->tasks.front()); // 从任务队列中取第一个任务
                             pool->tasks.pop();
                             locker.unlock();
                             task();  // std::function<void()> 对象，任务主体
@@ -61,6 +59,7 @@ public:
                 std::lock_guard<std::mutex> locker(pool_->mtx);
                 /*using a local lock_guard to lock mtx guarantees unlocking on destruction / exception*/
                 pool_->isClosed = true;
+                // 释放锁
             }
             pool_->cond.notify_all(); // 唤醒所有线程
         }
@@ -87,7 +86,7 @@ private:
         bool isClosed;                  // 是否关闭
         std::queue<std::function<void()>> tasks;    // 线程队列（保存的是任务）
     };
-    std::shared_ptr<Pool> pool_;  //  智能指针，指向该线程池
+    std::shared_ptr<Pool> pool_;  //  智能指针，指向该线程池，自动释放
 };
 
 

@@ -29,7 +29,7 @@ void HttpConn::init(int fd, const sockaddr_in& addr) {
 }
 
 void HttpConn::Close() {
-    response_.UnmapFile();  // 接触内存映射
+    response_.UnmapFile();  // 解除内存映射
     if(isClose_ == false){
         isClose_ = true; 
         userCount--;

@@ -16,10 +16,10 @@ typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds MS;
 typedef Clock::time_point TimeStamp;
 
-struct TimerNode {
-    int id;
-    TimeStamp expires;
-    TimeoutCallBack cb;
+struct TimerNode { // 某一 HttpConn 连接的定时器
+    int id; // 连接对应的 socketFd
+    TimeStamp expires; // 有效期
+    TimeoutCallBack cb; //回调函数，设置超时之后的行为
     bool operator<(const TimerNode& t) {
         return expires < t.expires;
     }
@@ -53,9 +53,9 @@ private:
 
     void SwapNode_(size_t i, size_t j);
 
-    std::vector<TimerNode> heap_;
+    std::vector<TimerNode> heap_; // 定时器时间堆
 
-    std::unordered_map<int, size_t> ref_;
+    std::unordered_map<int, size_t> ref_; // id (fd) 在 heap_ 中对应的下标位置
 };
 
 #endif //HEAP_TIMER_H
