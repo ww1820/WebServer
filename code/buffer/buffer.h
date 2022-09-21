@@ -12,8 +12,8 @@ public:
     Buffer(int initBuffSize = 1024);
     ~Buffer() = default;
 
-    size_t WritableBytes() const;       
-    size_t ReadableBytes() const ;
+    size_t WritableBytes() const;
+    size_t ReadableBytes() const;
     size_t PrependableBytes() const;
 
     const char* Peek() const;
@@ -23,7 +23,7 @@ public:
     void Retrieve(size_t len);
     void RetrieveUntil(const char* end);
 
-    void RetrieveAll() ;
+    void RetrieveAll();
     std::string RetrieveAllToStr();
 
     const char* BeginWriteConst() const;

@@ -17,7 +17,7 @@ Log::~Log() {
             deque_->flush();
         };
         deque_->Close();
-        writeThread_->join();
+        writeThread_->join(); // 回收 writeThread_
     }
     if(fp_) {
         lock_guard<mutex> locker(mtx_);
@@ -45,8 +45,9 @@ void Log::init(int level = 1, const char* path, const char* suffix,
         if(!deque_) {
             unique_ptr<BlockDeque<std::string>> newDeque(new BlockDeque<std::string>);
             deque_ = move(newDeque);
-            
-            std::unique_ptr<std::thread> NewThread(new thread(FlushLogThread));
+            // deque_.reset(new BlockDeque<std::string>);
+
+            std::unique_ptr<std::thread> NewThread(new thread(FlushLogThread)); // 异步写线程
             writeThread_ = move(NewThread);
         }
     } else {
@@ -60,7 +61,7 @@ void Log::init(int level = 1, const char* path, const char* suffix,
     struct tm t = *sysTime;
     
     path_ = path;
-    suffix_ = suffix;
+    suffix_ = suffix; // 文件后缀 .log
     char fileName[LOG_NAME_LEN] = {0};
     snprintf(fileName, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d%s", 
             path_, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, suffix_);
@@ -83,6 +84,7 @@ void Log::init(int level = 1, const char* path, const char* suffix,
     }
 }
 
+// 写入 Buffer 缓冲区
 void Log::write(int level, const char *format, ...) {
     struct timeval now = {0, 0};
     gettimeofday(&now, nullptr);
@@ -112,13 +114,15 @@ void Log::write(int level, const char *format, ...) {
         }
         
         locker.lock();
-        flush();
+        flush(); // 刷新内核缓冲区
         fclose(fp_);
+        // 打开新文件
         fp_ = fopen(newFile, "a");
         assert(fp_ != nullptr);
     }
 
     {
+        // 将日志写入缓冲区
         unique_lock<mutex> locker(mtx_);
         lineCount_++;
         int n = snprintf(buff_.BeginWrite(), 128, "%d-%02d-%02d %02d:%02d:%02d.%06ld ",
@@ -126,7 +130,7 @@ void Log::write(int level, const char *format, ...) {
                     t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);
                     
         buff_.HasWritten(n);
-        AppendLogLevelTitle_(level);
+        AppendLogLevelTitle_(level); // 写入日志级别
 
         va_start(vaList, format);
         int m = vsnprintf(buff_.BeginWrite(), buff_.WritableBytes(), format, vaList);
@@ -135,10 +139,10 @@ void Log::write(int level, const char *format, ...) {
         buff_.HasWritten(m);
         buff_.Append("\n\0", 2);
 
-        if(isAsync_ && deque_ && !deque_->full()) {
-            deque_->push_back(buff_.RetrieveAllToStr());
-        } else {
-            fputs(buff_.Peek(), fp_);
+        if(isAsync_ && deque_ && !deque_->full()) {// 异步
+            deque_->push_back(buff_.RetrieveAllToStr()); // 写入阻塞队列中
+        } else { // 同步
+            fputs(buff_.Peek(), fp_); // 写入内核缓冲
         }
         buff_.RetrieveAll();
     }
@@ -165,17 +169,17 @@ void Log::AppendLogLevelTitle_(int level) {
 }
 
 void Log::flush() {
-    if(isAsync_) { 
-        deque_->flush(); 
+    if(isAsync_) {  // 异步
+        deque_->flush(); // 唤醒消费者
     }
-    fflush(fp_);
+    fflush(fp_); // 刷新缓冲区到文件中
 }
 
-void Log::AsyncWrite_() {
+void Log::AsyncWrite_() { // 异步写入
     string str = "";
     while(deque_->pop(str)) {
         lock_guard<mutex> locker(mtx_);
-        fputs(str.c_str(), fp_);
+        fputs(str.c_str(), fp_); // 将 阻塞队列 中的内容写入到日志文件中
     }
 }
 

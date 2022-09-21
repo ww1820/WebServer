@@ -39,6 +39,10 @@ void Buffer::RetrieveAll() {
 }
 
 std::string Buffer::RetrieveAllToStr() {
+    /*
+    string (const char* s, size_t n);
+    Copies the first n characters from the array of characters pointed by s.
+    */
     std::string str(Peek(), ReadableBytes());
     RetrieveAll();
     return str;
@@ -86,7 +90,7 @@ void Buffer::EnsureWriteable(size_t len) {
 
 ssize_t Buffer::ReadFd(int fd, int* saveErrno) {
     
-    char buff[65535];   // 临时的数组，保证能够把所有的数据都读出来
+    char buff[65535];   // 临时的数组
     
     struct iovec iov[2];
     const size_t writable = WritableBytes();
@@ -97,7 +101,7 @@ ssize_t Buffer::ReadFd(int fd, int* saveErrno) {
     iov[1].iov_base = buff;
     iov[1].iov_len = sizeof(buff);
 
-    const ssize_t len = readv(fd, iov, 2);
+    const ssize_t len = readv(fd, iov, 2); // 将 fd 内容读入缓冲区
     if(len < 0) {
         *saveErrno = errno;
     }

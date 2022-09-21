@@ -79,18 +79,18 @@ ssize_t HttpConn::write(int* saveErrno) {
         if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } /* 传输结束 */
         // 写到了第二块内存，做相应的处理
         else if(static_cast<size_t>(len) > iov_[0].iov_len) {
-            iov_[1].iov_base = (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);
-            iov_[1].iov_len -= (len - iov_[0].iov_len);
+            iov_[1].iov_base = (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len); // 修改指针到已经读取完成的数据后
+            iov_[1].iov_len -= (len - iov_[0].iov_len);  // 修改长度为剩余长度
             if(iov_[0].iov_len) {
-                writeBuff_.RetrieveAll();
+                writeBuff_.RetrieveAll(); // 清空写缓冲区
                 iov_[0].iov_len = 0;
             }
         }
         // 还没有写到第二块内存的数据
         else {
-            iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len; 
-            iov_[0].iov_len -= len; 
-            writeBuff_.Retrieve(len);
+            iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len; // 修改指针
+            iov_[0].iov_len -= len; // 修改长度
+            writeBuff_.Retrieve(len); // writeBuff_ 读指针 向前移动 len 
         }
     } while(isET || ToWriteBytes() > 10240);
     return len;

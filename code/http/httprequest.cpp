@@ -25,6 +25,7 @@ bool HttpRequest::IsKeepAlive() const {
 
 // 解析请求数据
 bool HttpRequest::parse(Buffer& buff) {
+
     const char CRLF[] = "\r\n"; // 行结束符
     if(buff.ReadableBytes() <= 0) {
         return false;

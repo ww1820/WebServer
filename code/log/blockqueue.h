@@ -124,7 +124,7 @@ void BlockDeque<T>::push_back(const T &item) {
 template<class T>
 void BlockDeque<T>::push_front(const T &item) {
     std::unique_lock<std::mutex> locker(mtx_);
-    while(deq_.size() >= capacity_) {
+    while(deq_.size() >= capacity_) { // 缓冲区满
         condProducer_.wait(locker);
     }
     deq_.push_front(item);

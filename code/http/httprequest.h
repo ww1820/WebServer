@@ -32,7 +32,7 @@ public:
         INTERNAL_ERROR,
         CLOSED_CONNECTION,
     };
-    
+
     HttpRequest() { Init(); }
     ~HttpRequest() = default;
 
