@@ -106,7 +106,7 @@ bool HttpConn::process() {
     }
     else if(request_.parse(readBuff_)) {    // 解析请求数据
         LOG_DEBUG("%s", request_.path().c_str());
-        // 解析玩请求数据以后，初始化响应对象
+        // 解析完请求数据以后，初始化响应对象
         response_.Init(srcDir, request_.path(), request_.IsKeepAlive(), 200);
     } else {
         // 解析失败

@@ -142,7 +142,7 @@ void Log::write(int level, const char *format, ...) {
         if(isAsync_ && deque_ && !deque_->full()) {// 异步
             deque_->push_back(buff_.RetrieveAllToStr()); // 写入阻塞队列中
         } else { // 同步
-            fputs(buff_.Peek(), fp_); // 写入内核缓冲
+            fputs(buff_.Peek(), fp_); // 写入stdio缓冲区
         }
         buff_.RetrieveAll();
     }
@@ -172,14 +172,14 @@ void Log::flush() {
     if(isAsync_) {  // 异步
         deque_->flush(); // 唤醒消费者
     }
-    fflush(fp_); // 刷新缓冲区到文件中
+    fflush(fp_); // 刷新缓冲区
 }
 
 void Log::AsyncWrite_() { // 异步写入
     string str = "";
     while(deque_->pop(str)) {
         lock_guard<mutex> locker(mtx_);
-        fputs(str.c_str(), fp_); // 将 阻塞队列 中的内容写入到日志文件中
+        fputs(str.c_str(), fp_); // 将 阻塞队列 中的内容写入到stdio缓冲区中
     }
 }
 

@@ -18,7 +18,7 @@ typedef Clock::time_point TimeStamp;
 
 struct TimerNode { // 某一 HttpConn 连接的定时器
     int id; // 连接对应的 socketFd
-    TimeStamp expires; // 有效期
+    TimeStamp expires; // 有效期，绝对时间
     TimeoutCallBack cb; //回调函数，设置超时之后的行为
     bool operator<(const TimerNode& t) {
         return expires < t.expires;
